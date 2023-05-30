@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "examples_xplatform_grpc_echo_client_test_stubs_swift",
+    srcs = ["echo.grpc.swift"],
+    module_name = "examples_xplatform_grpc_echo_client_test_stubs_swift",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/xplatform/examples_xplatform_grpc_echo_client_services_swift",
+        "//examples/xplatform/examples_xplatform_grpc_echo_proto",
+        "@swiftpkg_grpc_swift//:Sources_GRPC",
+    ],
+)

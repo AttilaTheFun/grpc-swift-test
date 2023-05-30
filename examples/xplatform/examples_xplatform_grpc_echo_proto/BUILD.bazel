@@ -1,0 +1,11 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "examples_xplatform_grpc_echo_proto",
+    srcs = ["echo.pb.swift"],
+    module_name = "examples_xplatform_grpc_echo_proto",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@swiftpkg_swift_protobuf//:Sources_SwiftProtobuf",  # keep
+    ],
+)

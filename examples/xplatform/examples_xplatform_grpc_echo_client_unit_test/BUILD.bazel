@@ -1,0 +1,16 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_test")
+
+swift_test(
+    name = "examples_xplatform_grpc_echo_client_unit_test",
+    srcs = [
+        "client_unit_test.swift",
+        # "main.swift",
+    ],
+    module_name = "examples_xplatform_grpc_echo_client_unit_test",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/xplatform/examples_xplatform_grpc_echo_client_services_swift",
+        "//examples/xplatform/examples_xplatform_grpc_echo_client_test_stubs_swift",
+        "//examples/xplatform/examples_xplatform_grpc_echo_proto",
+    ],
+)
