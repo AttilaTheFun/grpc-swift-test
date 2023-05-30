@@ -4,7 +4,7 @@ swift_test(
     name = "examples_xplatform_grpc_echo_client_unit_test",
     srcs = [
         "client_unit_test.swift",
-        # "main.swift",
+        "main.swift",
     ],
     module_name = "examples_xplatform_grpc_echo_client_unit_test",
     visibility = ["//visibility:public"],
