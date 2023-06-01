@@ -10,16 +10,6 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "examples_xplatform_grpc_echo_client",
-            dependencies: [
-                .product(name: "GRPC", package: "grpc-swift"),
-                .target(name: "examples_xplatform_grpc_echo_proto"),
-                .target(name: "examples_xplatform_grpc_echo_client_services_swift")
-            ],
-            path: "examples/xplatform/examples_xplatform_grpc_echo_client",
-            exclude: ["BUILD.bazel"]
-        ),
-        .target(
             name: "examples_xplatform_grpc_echo_client_services_swift",
             dependencies: [
                 .product(name: "GRPC", package: "grpc-swift"),
@@ -69,6 +59,26 @@ let package = Package(
             path: "examples/xplatform/examples_xplatform_grpc_echo_proto",
             exclude: ["BUILD.bazel"]
         ),
+        .executableTarget(
+            name: "examples_xplatform_grpc_echo_server",
+            dependencies: [
+                .product(name: "GRPC", package: "grpc-swift"),
+                .target(name: "examples_xplatform_grpc_echo_proto"),
+                .target(name: "examples_xplatform_grpc_echo_server_services_swift"),
+            ],
+            path: "examples/xplatform/examples_xplatform_grpc_echo_server",
+            exclude: ["BUILD.bazel"]
+        ),
+        .executableTarget(
+            name: "examples_xplatform_grpc_echo_client",
+            dependencies: [
+                .product(name: "GRPC", package: "grpc-swift"),
+                .target(name: "examples_xplatform_grpc_echo_proto"),
+                .target(name: "examples_xplatform_grpc_echo_client_services_swift"),
+            ],
+            path: "examples/xplatform/examples_xplatform_grpc_echo_client",
+            exclude: ["BUILD.bazel"]
+        )
 
         // .testTarget(
         //     name: "MyLibraryTests",
