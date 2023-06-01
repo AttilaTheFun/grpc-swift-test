@@ -5,6 +5,7 @@ import PackageDescription
 let package = Package(
     name: "GRPCTest",
     dependencies: [
+        .package(url: "https://github.com/apple/swift-nio-ssl.git", exact: "2.23.0"),
         .package(url: "https://github.com/grpc/grpc-swift.git", exact: "1.16.0")
     ],
     targets: [

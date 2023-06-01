@@ -12,36 +12,94 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import XCTest
 import examples_xplatform_grpc_echo_client_services_swift
+import examples_xplatform_grpc_echo_server_services_swift
 import examples_xplatform_grpc_echo_proto
+import GRPC
+import NIOCore
+import NIOPosix
+import XCTest
 
-@testable import examples_xplatform_grpc_echo_client_test_stubs_swift
+public class EchoServiceProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
+  public let interceptors: RulesSwift_Examples_Grpc_EchoServiceServerInterceptorFactoryProtocol?
+
+  public init(interceptors: RulesSwift_Examples_Grpc_EchoServiceServerInterceptorFactoryProtocol? = nil) {
+    self.interceptors = interceptors
+  }
+
+  public func echo(
+    request: RulesSwift_Examples_Grpc_EchoRequest, 
+    context: StatusOnlyCallContext) 
+    -> EventLoopFuture<RulesSwift_Examples_Grpc_EchoResponse> 
+  {
+    let response = RulesSwift_Examples_Grpc_EchoResponse.with {
+      $0.contents = request.contents
+    }
+    return context.eventLoop.makeSucceededFuture(response)
+  }
+}
 
 class ClientUnitTest: XCTestCase {
-  func testSynchronousCall() throws {
-    let stub = RulesSwift_Examples_Grpc_EchoServiceTestClient()
-    stub.enqueueEchoResponse(RulesSwift_Examples_Grpc_EchoResponse.with { response in
-      response.contents = "Hello"
-    })
-    let client: RulesSwift_Examples_Grpc_EchoServiceClientProtocol = stub
-    
-    let expectation = self.expectation(description: "Echo response contents are correct")
-    let call = client.echo(RulesSwift_Examples_Grpc_EchoRequest())
+
+  private var group: MultiThreadedEventLoopGroup?
+  private var server: Server?
+  private var channel: ClientConnection?
+
+  private func setUpServerAndChannel() throws -> ClientConnection {
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    self.group = group
+
+    let server = try Server.insecure(group: group)
+      .withServiceProviders([EchoServiceProvider()])
+      .bind(host: "127.0.0.1", port: 0)
+      .wait()
+
+    self.server = server
+
+    let channel = ClientConnection.insecure(group: group)
+      .connect(host: "127.0.0.1", port: server.channel.localAddress!.port!)
+
+    self.channel = channel
+
+    return channel
+  }
+
+  override func tearDown() {
+    if let channel = self.channel {
+      XCTAssertNoThrow(try channel.close().wait())
+    }
+    if let server = self.server {
+      XCTAssertNoThrow(try server.close().wait())
+    }
+    if let group = self.group {
+      XCTAssertNoThrow(try group.syncShutdownGracefully())
+    }
+
+    super.tearDown()
+  }
+
+  func testGetWithRealClientAndServer() throws {
+    let channel = try self.setUpServerAndChannel()
+    let client = RulesSwift_Examples_Grpc_EchoServiceNIOClient(channel: channel)
+
+    let completed = self.expectation(description: "'Get' completed")
+
+    let call = client.echo(.with { $0.contents = "Hello" })
     call.response.whenComplete { result in
       switch result {
       case let .success(response):
         XCTAssertEqual(response.contents, "Hello")
-        expectation.fulfill()
       case let .failure(error):
-        XCTFail(error.localizedDescription)
+        XCTFail("Unexpected error \(error)")
       }
+
+      completed.fulfill()
     }
-    
-    self.wait(for: [expectation], timeout: 10.0)
+
+    self.wait(for: [completed], timeout: 10.0)
   }
 
   static var allTests = [
-    ("testSynchronousCall", testSynchronousCall),
+    ("testGetWithRealClientAndServer", testGetWithRealClientAndServer),
   ]
 }

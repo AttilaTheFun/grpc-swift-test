@@ -60,7 +60,7 @@ def swift_dependencies():
     # version: 2.24.0
     swift_package(
         name = "swiftpkg_swift_nio_ssl",
-        commit = "e866a626e105042a6a72a870c88b4c531ba05f83",
+        commit = "4fb7ead803e38949eb1d6fabb849206a72c580f3",
         dependencies_index = "@//:swift_deps_index.json",
         remote = "https://github.com/apple/swift-nio-ssl.git",
     )
