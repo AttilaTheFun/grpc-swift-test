@@ -18,6 +18,7 @@ import NIOCore
 import NIOPosix
 import examples_xplatform_grpc_echo_proto
 import examples_xplatform_grpc_echo_server_services_swift
+import Atomics
 
 /// Concrete implementation of the `EchoService` service definition.
 class EchoProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
@@ -40,17 +41,19 @@ class EchoProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
 @main
 struct ServerMain {
   static func main() throws {
-    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    defer {
-      try! group.syncShutdownGracefully()
-    }
+    // let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    // defer {
+    //   try! group.syncShutdownGracefully()
+    // }
 
-    print("before server")
+    print("before atomic")
+    let isOpen = ManagedAtomic(false)
+    print(isOpen.load(ordering: .sequentiallyConsistent))
 
     // // Initialize and start the service.
-    let server = Server.insecure(group: group)
-      // .withServiceProviders([EchoProvider()])
-      .bind(host: "0.0.0.0", port: 9000)
+    // let server = Server.insecure(group: group)
+    //   .withServiceProviders([EchoProvider()])
+    //   .bind(host: "0.0.0.0", port: 9000)
 
     // server.map {
     //   $0.channel.localAddress
@@ -63,6 +66,6 @@ struct ServerMain {
     //   $0.onClose
     // }.wait()
 
-    print("after server")
+    print("after atomic")
   }
 }
