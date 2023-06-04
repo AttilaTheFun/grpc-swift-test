@@ -40,7 +40,7 @@ class EchoProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
 @main
 struct ServerMain {
   static func main() throws {
-    print("before")
+    // print("before")
 
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     defer {
