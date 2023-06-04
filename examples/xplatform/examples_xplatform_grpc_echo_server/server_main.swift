@@ -40,25 +40,29 @@ class EchoProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
 @main
 struct ServerMain {
   static func main() throws {
+    print("before")
+
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     defer {
       try! group.syncShutdownGracefully()
     }
 
-    // Initialize and start the service.
-    let server = Server.insecure(group: group)
-      .withServiceProviders([EchoProvider()])
-      .bind(host: "0.0.0.0", port: 9000)
+    // // Initialize and start the service.
+    // let server = Server.insecure(group: group)
+    //   .withServiceProviders([EchoProvider()])
+    //   .bind(host: "0.0.0.0", port: 9000)
 
-    server.map {
-      $0.channel.localAddress
-    }.whenSuccess { address in
-      print("server started on port \(address!.port!)")
-    }
+    // server.map {
+    //   $0.channel.localAddress
+    // }.whenSuccess { address in
+    //   print("server started on port \(address!.port!)")
+    // }
 
-    // Wait on the server's `onClose` future to stop the program from exiting.
-    _ = try server.flatMap {
-      $0.onClose
-    }.wait()
+    // // Wait on the server's `onClose` future to stop the program from exiting.
+    // _ = try server.flatMap {
+    //   $0.onClose
+    // }.wait()
+
+    print("after")
   }
 }
