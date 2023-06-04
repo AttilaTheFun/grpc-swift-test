@@ -40,17 +40,17 @@ class EchoProvider: RulesSwift_Examples_Grpc_EchoServiceProvider {
 @main
 struct ServerMain {
   static func main() throws {
-    // print("before")
-
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     defer {
       try! group.syncShutdownGracefully()
     }
 
+    print("before server")
+
     // // Initialize and start the service.
-    // let server = Server.insecure(group: group)
-    //   .withServiceProviders([EchoProvider()])
-    //   .bind(host: "0.0.0.0", port: 9000)
+    let server = Server.insecure(group: group)
+      // .withServiceProviders([EchoProvider()])
+      .bind(host: "0.0.0.0", port: 9000)
 
     // server.map {
     //   $0.channel.localAddress
@@ -63,6 +63,6 @@ struct ServerMain {
     //   $0.onClose
     // }.wait()
 
-    print("after")
+    print("after server")
   }
 }
